@@ -1,5 +1,5 @@
 ---
-title: BOOK A DEMOSubmit a search query with enhanced parameters (POST)
+title: BOOK A DEMO Submit a search query with enhanced parameters (POST)
 excerpt: >
   Enhanced search endpoint with additional parameters for more granular control
   over search behavior.
