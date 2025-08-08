@@ -12,10 +12,11 @@ api:
   file: psearch-agent API Docs.yaml
   operationId: post_v2-search
 hidden: false
-icon: 😀
+icon: 🟢
 next:
   pages:
     - title: BOOK A DEMO
       type: link
       url: https://calendly.com/all_pearch/hrachik-and-jerry-15min
 ---
+<Anchor label="**Book a demo**" target="_blank" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min">**Book a demo**</Anchor> if you don't have a clue what's going on here
