@@ -27,7 +27,17 @@ next:
 <br />
 
 <Cards columns={1}>
-  <Card title="Book a demo" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min" icon="fa-democrat" target="_blank" rel="noopener noreferrer" style={{ backgroundColor: '#F7F8FA', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
-    if you don't have a clue what's going on here
+  <Card title="Book a demo" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min" icon="fa-democrat" target="_blank" rel="noopener noreferrer">
+    <div
+      className="tinted-card"
+      style={{
+        background: '#F5F8FF',
+        padding: '16px',
+        margin: '-16px',        // тянем фон до границ карточки
+        borderRadius: '12px'    // подровнять скругление
+      }}
+    >
+      if you don't have a clue what's going on here
+    </div>
   </Card>
 </Cards>
