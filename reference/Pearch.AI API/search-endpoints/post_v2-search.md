@@ -19,4 +19,4 @@ next:
       type: link
       url: https://calendly.com/all_pearch/hrachik-and-jerry-15min
 ---
-<Anchor label="**Book a demo**" target="_blank" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min">**Book a demo**</Anchor> if you don't have a clue what's going on here
+<Anchor label="**Book a demo**" target="_blank" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min">**Book a demo**</Anchor> if `you` don't have a clue what's going on here
