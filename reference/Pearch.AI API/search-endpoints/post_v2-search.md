@@ -19,7 +19,7 @@ next:
 <Anchor label="**Book a demo**" target="_blank" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min">**Book a demo**</Anchor>` if you don't have a clue what's going on here`
 
 <Cards columns={1}>
-  <Card title="Book a demo" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min" icon="https://static.tildacdn.com/tild3834-6436-4431-a633-616336653461/Book_a_Demo_Icon.png" target="_blank">
+  <Card title="Book a demo" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min" icon="fa-democrat" target="_blank">
     if you don't have a clue what's going on here
   </Card>
 </Cards>
