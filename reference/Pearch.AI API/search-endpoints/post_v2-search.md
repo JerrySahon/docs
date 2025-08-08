@@ -18,8 +18,8 @@ next:
 ---
 <Anchor label="**Book a demo**" target="_blank" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min">**Book a demo**</Anchor>` if you don't have a clue what's going on here`
 
-<Cards columns={1}>
-  <Card title="Book a demo" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min" icon="fa-solid fa-democrat" target="_blank">
-    if you don't have a clue what's going on here
-  </Card>
-</Cards>
+\<Cards columns=\{1}>
+&#x20; \<Card title="Book a demo" href="https\://calendly.com/all\_pearch/hrachik-and-jerry-15min" icon=\<i class="fa-solid fa-kiwi-bird">\</i> target="\_blank">
+&#x20;   if you don't have a clue what's going on here
+&#x20; \</Card>
+\</Cards>
