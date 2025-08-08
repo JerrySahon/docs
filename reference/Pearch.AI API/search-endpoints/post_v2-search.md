@@ -24,18 +24,10 @@ next:
   </Card>
 </Cards>
 
-<Tabs>
-  <Tab title="First Tab">
-    Welcome to the content that you can only see inside the first Tab.
-  </Tab>
+<br />
 
-  <Tab title="Second Tab">
-    Here's content that's only inside the second Tab.
-  </Tab>
-
-  <Tab title="Third Tab">
-    Here's content that's only inside the third Tab.
-  </Tab>
-</Tabs>
-
-<Image align="center" alt="https://calendly.com/all_pearch/hrachik-and-jerry-15min" src="https://files.readme.io/dbe6fa64378b93a56fed0174b0832c112f4ae67584c34dd7d72b2d820b67795c-Book_a_Demo_Icon.png" />
+<Cards columns={1}>
+  <Card title="Book a demo" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min" icon="fa-democrat" target="_blank" rel="noopener noreferrer" style={{ backgroundColor: '#F7F8FA', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
+    if you don't have a clue what's going on here
+  </Card>
+</Cards>
