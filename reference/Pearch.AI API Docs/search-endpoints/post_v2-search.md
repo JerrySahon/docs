@@ -9,7 +9,6 @@ api:
   file: psearch-agent API Docs.yaml
   operationId: post_v2-search
 hidden: false
-icon: 🟢
 next:
   pages:
     - title: BOOK A DEMO
