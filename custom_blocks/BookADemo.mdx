@@ -8,67 +8,39 @@ export const BookDemoButton = ({
   size = "lg",    // sm | md | lg
   icon = true
 }) => {
-  // определяем тему
-  const isDark =
-    (typeof document !== "undefined" &&
-      (document.documentElement.classList.contains("dark") ||
-       document.body.classList.contains("dark"))) || false;
-
   const sizes = {
     sm: "text-sm px-4 py-2.5",
     md: "text-base px-5 py-3",
     lg: "text-lg px-6 py-4"
   }[size] || "text-lg px-6 py-4";
 
-  // цвета по требованию
-  const bg = isDark ? "#ffffff" : "#2a2a2a";
-  const fg = isDark ? "#2a2a2a" : "#ffffff";
-  const bgHover = isDark ? "#f5f5f5" : "#000000";
-
   return (
-    <div className="w-full">
+    <div className="flex justify-center w-full">
       <a
         href={href}
         target="_blank"
         rel="noopener noreferrer"
         className={[
-          "block w-full rounded-2xl shadow-lg transition-all duration-200",
-          "focus:outline-none",
-          isDark ? "focus:ring-4 focus:ring-white/40" : "focus:ring-4 focus:ring-black/30"
+          "group flex items-center gap-3 rounded-2xl shadow-lg transition-all duration-200",
+          "bg-[#2a2a2a] text-white hover:bg-black",               // светлая тема
+          "dark:bg-white dark:text-[#2a2a2a] dark:hover:bg-gray-100", // тёмная тема
+          "focus:outline-none focus:ring-4 focus:ring-black/30 dark:focus:ring-white/40",
+          "w-[70%] justify-center", // ширина 70% от контейнера
+          sizes
         ].join(" ")}
-        // принудительно задаём цвета, чтобы их не перебивали стили темы
-        style={{
-          backgroundColor: bg,
-          color: fg
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = bgHover)}
-        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = bg)}
       >
-        <div className={["w-full flex items-center justify-center gap-3", sizes].join(" ")}>
-          {icon && (
-            <i
-              className="fa-solid fa-calendar text-xl"
-              style={{ color: fg }}
-            />
+        {icon && (
+          <i className="fa-solid fa-calendar text-xl group-hover:scale-105 transition-transform" />
+        )}
+        <span className="leading-tight text-center">
+          <span className="font-semibold">{label}</span>
+          {sublabel && (
+            <span className="block opacity-80 text-xs font-normal">
+              {sublabel}
+            </span>
           )}
-
-          <span className="leading-tight text-center" style={{ color: fg }}>
-            <span className="font-semibold">{label}</span>
-            {sublabel && (
-              <span
-                className="block text-xs font-normal opacity-80"
-                style={{ color: fg }}
-              >
-                {sublabel}
-              </span>
-            )}
-          </span>
-
-          <i
-            className="fa-solid fa-arrow-right text-lg"
-            style={{ color: fg }}
-          />
-        </div>
+        </span>
+        <i className="fa-solid fa-arrow-right text-lg opacity-80 group-hover:translate-x-0.5 transition-transform" />
       </a>
     </div>
   );
