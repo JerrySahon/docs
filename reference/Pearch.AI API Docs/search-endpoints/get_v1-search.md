@@ -8,5 +8,4 @@ api:
   file: psearch-agent API Docs.yaml
   operationId: get_v1-search
 hidden: false
-icon: far fa-ufo
 ---
