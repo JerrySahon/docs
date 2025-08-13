@@ -5,15 +5,25 @@ export const BookDemoButton = ({
   href = "https://calendly.com/all_pearch/hrachik-and-jerry-15min",
   label = "Book a demo",
   sublabel = "15 minutes • Calendly",
-  size = "lg",            // sm | md | lg
-  fullWidth = true,       // по умолчанию — во всю ширину
-  icon = true,
+  size = "lg",    // sm | md | lg
+  icon = true
 }) => {
+  // определяем тему
+  const isDark =
+    (typeof document !== "undefined" &&
+      (document.documentElement.classList.contains("dark") ||
+       document.body.classList.contains("dark"))) || false;
+
   const sizes = {
     sm: "text-sm px-4 py-2.5",
     md: "text-base px-5 py-3",
     lg: "text-lg px-6 py-4"
   }[size] || "text-lg px-6 py-4";
+
+  // цвета по требованию
+  const bg = isDark ? "#ffffff" : "#2a2a2a";
+  const fg = isDark ? "#2a2a2a" : "#ffffff";
+  const bgHover = isDark ? "#f5f5f5" : "#000000";
 
   return (
     <div className="w-full">
@@ -22,29 +32,43 @@ export const BookDemoButton = ({
         target="_blank"
         rel="noopener noreferrer"
         className={[
-          "group inline-flex items-center gap-3 rounded-2xl",
-          "font-semibold shadow-lg transition-all duration-200",
-          // светлая тема: чёрная кнопка
-          "bg-[#2a2a2a] text-white hover:bg-black",
-          // тёмная тема: белая кнопка с тёмным текстом
-          "dark:bg-white dark:text-[#2a2a2a] dark:hover:bg-neutral-100",
-          "focus:outline-none focus:ring-4 focus:ring-black/30 dark:focus:ring-white/40",
-          sizes,
-          fullWidth ? "w-full justify-center" : ""
+          "block w-full rounded-2xl shadow-lg transition-all duration-200",
+          "focus:outline-none",
+          isDark ? "focus:ring-4 focus:ring-white/40" : "focus:ring-4 focus:ring-black/30"
         ].join(" ")}
+        // принудительно задаём цвета, чтобы их не перебивали стили темы
+        style={{
+          backgroundColor: bg,
+          color: fg
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = bgHover)}
+        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = bg)}
       >
-        {icon && (
-          <i className="fa-solid fa-calendar text-xl group-hover:scale-105 transition-transform" />
-        )}
-        <span className="leading-tight">
-          {label}
-          {sublabel && (
-            <span className="block opacity-80 text-xs font-normal">
-              {sublabel}
-            </span>
+        <div className={["w-full flex items-center justify-center gap-3", sizes].join(" ")}>
+          {icon && (
+            <i
+              className="fa-solid fa-calendar text-xl"
+              style={{ color: fg }}
+            />
           )}
-        </span>
-        <i className="fa-solid fa-arrow-right ml-1 opacity-80 group-hover:translate-x-0.5 transition-transform" />
+
+          <span className="leading-tight text-center" style={{ color: fg }}>
+            <span className="font-semibold">{label}</span>
+            {sublabel && (
+              <span
+                className="block text-xs font-normal opacity-80"
+                style={{ color: fg }}
+              >
+                {sublabel}
+              </span>
+            )}
+          </span>
+
+          <i
+            className="fa-solid fa-arrow-right text-lg"
+            style={{ color: fg }}
+          />
+        </div>
       </a>
     </div>
   );
