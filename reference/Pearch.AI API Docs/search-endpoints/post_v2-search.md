@@ -27,7 +27,7 @@ next:
   **if you don't have a clue what's going on here**
 </Accordion>
 
-<Callout icon="🧑‍🦯">
+<Callout icon="🧑‍🦯" theme="default">
   <Cards columns={0}>
     <Card title="BOOK A DEMO" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min" icon="fa-kiwi-bird" target="_blank">
       **if you don't have a clue what's going on here**
@@ -36,3 +36,5 @@ next:
 </Callout>
 
 ***
+
+<BookDemoButton href="https://calendly.com/all_pearch/hrachik-and-jerry-15min" label="Book a demo" sublabel="15 minutes • Calendly" size="lg" fullWidth={false} align="center" />
