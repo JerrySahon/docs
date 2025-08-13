@@ -11,30 +11,8 @@ api:
 hidden: false
 next:
   pages:
-    - title: BOOK A DEMO
+    - title: Back to the main page
       type: link
-      url: https://calendly.com/all_pearch/hrachik-and-jerry-15min
+      url: https://pearch.ai
 ---
-<Anchor label="**Book a demo**" target="_blank" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min">**Book a demo**</Anchor>` if you don't have a clue what's going on here`
-
-<Cards columns={0}>
-  <Card title="BOOK A DEMO" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min" icon="fa-kiwi-bird" target="_blank">
-    **if you don't have a clue what's going on here**
-  </Card>
-</Cards>
-
-<Accordion title="BOOK A DEMO" icon="fa-info-circle">
-  **if you don't have a clue what's going on here**
-</Accordion>
-
-<Callout icon="🧑‍🦯" theme="default">
-  <Cards columns={0}>
-    <Card title="BOOK A DEMO" href="https://calendly.com/all_pearch/hrachik-and-jerry-15min" icon="fa-kiwi-bird" target="_blank">
-      **if you don't have a clue what's going on here**
-    </Card>
-  </Cards>
-</Callout>
-
-***
-
 <BookDemoButton href="https://calendly.com/all_pearch/hrachik-and-jerry-15min" label="Book a demo" sublabel="15 minutes • Calendly" size="lg" fullWidth={false} align="center" />
