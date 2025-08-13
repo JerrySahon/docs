@@ -1,0 +1,57 @@
+---
+name: BookADemo
+---
+export const BookDemoButton = ({
+  href = "https://calendly.com/all_pearch/hrachik-and-jerry-15min",
+  label = "Book a demo",
+  sublabel = "15 minutes • Calendly",
+  size = "lg",            // sm | md | lg
+  fullWidth = false,      // true | false
+  icon = true,            // показать иконку
+  align = "center"        // left | center | right
+}) => {
+  const sizes = {
+    sm: "text-sm px-4 py-2",
+    md: "text-base px-5 py-3",
+    lg: "text-lg px-6 py-3.5"
+  }[size] || "text-lg px-6 py-3.5";
+
+  const wrapperAlign = {
+    left: "justify-start",
+    center: "justify-center",
+    right: "justify-end"
+  }[align] || "justify-center";
+
+  return (
+    <div className={`w-full flex ${wrapperAlign}`}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={[
+          "group inline-flex items-center gap-3 rounded-2xl",
+          "bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800",
+          "text-white font-semibold shadow-lg hover:shadow-xl",
+          "transition-all duration-200",
+          "focus:outline-none focus:ring-4 focus:ring-emerald-300/60",
+          "dark:focus:ring-emerald-800/60",
+          sizes,
+          fullWidth ? "w-full justify-center" : ""
+        ].join(" ")}
+      >
+        {icon && (
+          <i className="fa-solid fa-calendar text-xl group-hover:scale-105 transition-transform" />
+        )}
+        <span className="leading-tight">
+          {label}
+          {sublabel && (
+            <span className="block text-white/80 text-xs font-normal">
+              {sublabel}
+            </span>
+          )}
+        </span>
+        <i className="fa-solid fa-arrow-right ml-1 opacity-80 group-hover:translate-x-0.5 transition-transform" />
+      </a>
+    </div>
+  );
+};
