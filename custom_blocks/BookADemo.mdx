@@ -5,7 +5,7 @@ export const BookDemoButton = ({
   href = "https://calendly.com/all_pearch/hrachik-and-jerry-15min",
   label = "Book a demo",
   sublabel = "15 minutes • Calendly",
-  size = "lg",    // sm | md | lg
+  size = "lg",
   icon = true
 }) => {
   const sizes = {
@@ -14,6 +14,15 @@ export const BookDemoButton = ({
     lg: "text-lg px-6 py-4"
   }[size] || "text-lg px-6 py-4";
 
+  // Определяем, активна ли тёмная тема
+  const isDark =
+    typeof document !== "undefined" &&
+    document.documentElement.classList.contains("dark");
+
+  const bgColor = isDark ? "#ffffff" : "#2a2a2a";
+  const textColor = isDark ? "#2a2a2a" : "#ffffff";
+  const hoverColor = isDark ? "#f5f5f5" : "#000000";
+
   return (
     <div className="flex justify-center w-full">
       <a
@@ -21,26 +30,42 @@ export const BookDemoButton = ({
         target="_blank"
         rel="noopener noreferrer"
         className={[
-          "group flex items-center gap-3 rounded-2xl shadow-lg transition-all duration-200",
-          "bg-[#2a2a2a] text-white hover:bg-black",               // светлая тема
-          "dark:bg-white dark:text-[#2a2a2a] dark:hover:bg-gray-100", // тёмная тема
-          "focus:outline-none focus:ring-4 focus:ring-black/30 dark:focus:ring-white/40",
-          "w-[70%] justify-center", // ширина 70% от контейнера
+          "flex items-center gap-3 rounded-2xl shadow-lg transition-all duration-200",
+          "w-[70%] justify-center",
           sizes
         ].join(" ")}
+        style={{
+          backgroundColor: bgColor,
+          color: textColor
+        }}
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.backgroundColor = hoverColor)
+        }
+        onMouseLeave={(e) =>
+          (e.currentTarget.style.backgroundColor = bgColor)
+        }
       >
         {icon && (
-          <i className="fa-solid fa-calendar text-xl group-hover:scale-105 transition-transform" />
+          <i
+            className="fa-solid fa-calendar text-xl"
+            style={{ color: textColor }}
+          />
         )}
         <span className="leading-tight text-center">
           <span className="font-semibold">{label}</span>
           {sublabel && (
-            <span className="block opacity-80 text-xs font-normal">
+            <span
+              className="block opacity-80 text-xs font-normal"
+              style={{ color: textColor }}
+            >
               {sublabel}
             </span>
           )}
         </span>
-        <i className="fa-solid fa-arrow-right text-lg opacity-80 group-hover:translate-x-0.5 transition-transform" />
+        <i
+          className="fa-solid fa-arrow-right text-lg opacity-80"
+          style={{ color: textColor }}
+        />
       </a>
     </div>
   );
