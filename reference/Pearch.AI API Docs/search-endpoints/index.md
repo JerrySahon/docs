@@ -1,4 +1,4 @@
 ---
-title: Search endpoints
+title: Search
 hidden: false
 ---
