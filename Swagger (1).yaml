@@ -1,0 +1,1158 @@
+openapi: 3.0.4
+info:
+  title: Pearch.AI API
+  description: "Pearch.AI API for executing search queries. You need to pass API key as 'Authorization: Bearer <API_KEY>' header. "
+  version: "1"
+
+servers:
+  - url: https://api.pearch.ai/
+    description: Main server
+
+paths:
+  /v2/search:
+ 
+    post:
+      summary: Submit a search query with enhanced parameters (POST)
+      tags:
+        - Search endpoints
+      description: |
+        Enhanced search endpoint with additional parameters for more granular control over search behavior.
+        Submit a new search query using POST with JSON body. Uses LangGraph for processing with configurable options.
+        This endpoint always returns results immediately (synchronous).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  description: The search query string to be processed.
+                  default: "Software engineer with Python experience from Forida who is interested in science"
+                type:
+                  type: string
+                  enum: [fast, pro]
+                  default: "pro"
+                  description: The type of search to perform. 
+                insights:
+                  type: boolean
+                  default: true
+                  description: Enable detailed insights and analysis for search results.
+                high_freshness:
+                  type: boolean
+                  default: true
+                  description: Enable real-time profile updates for fresher data.
+                profile_scoring:
+                  type: boolean
+                  default: true
+                  description: Enable profile scoring and reranking for better result quality.
+                custom_filters:
+                  type: object
+                  description: |
+                    Custom filters in JSON format for advanced filtering. Format: {"filter_name1": ["value1", "value2"], ...}. The following filters are currently supported: locations, languages, titles, industries, companies, universities, keywords
+                  default: null
+                show_emails:
+                  type: boolean
+                  default: false
+                  description: Include email addresses in search results if available.
+                show_phone_numbers:
+                  type: boolean
+                  default: false
+                  description: Include phone numbers in search results if available.
+                limit:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  default: 10
+                  description: The maximum number of search results to return.
+              required:
+                - query
+      responses:
+        "200":
+          description: Search completed and results returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    description: Unique identifier for the query (thread ID).
+                    default: "ec191bf9-99ff-4989-8383-c97c71fafb6d"
+                  query:
+                    type: string
+                    description: The search query submitted by the user.
+                    default: "software engineer from Ohio"
+                  user:
+                    type: string
+                    description: Email address of the user who made the query.
+                    default: "dev@dev.co"
+                  created_at:
+                    type: number
+                    format: float
+                    description: Timestamp (UNIX epoch) when the query was created.
+                    default: 1744446727.123
+                  duration:
+                    type: number
+                    format: float
+                    description: Time taken to complete the search in seconds.
+                    default: 2.45
+                  status:
+                    type: string
+                    description: The current status of the query.
+                    default: "Done"
+                  total_estimate:
+                    type: integer
+                    description: The estimated total number of search results available.
+                    default: 1000
+                  credits_remaining:
+                    type: integer
+                    description: Number of credits remaining for the user.
+                    default: 950
+                  search_results:
+                    type: array
+                    description: List of search result objects matching the query.
+                    items:
+                      $ref: '#/components/schemas/SearchResult'
+        "401":
+          description: Invalid API key
+        "400":
+          description: Invalid parameter values. JSON body contains the error message.
+
+  /v2/search_company_leads:
+    post:
+      summary: Search for companies and their leads
+      tags:
+        - Search endpoints
+      description: |
+        Endpoint for finding companies based on a query and optionally finding leads within those companies. 
+        Allows for generation of personalized outreach messages for the identified leads.
+        This endpoint always returns results immediately (synchronous).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                company_query:
+                  type: string
+                  description: The search query for finding companies.
+                  default: "AI startups in San Francisco with 50-200 employees"
+                lead_query:
+                  type: string
+                  description: Optional query for finding specific leads within the companies.
+                  default: "CTOs and engineering managers"
+                outreach_message_instruction:
+                  type: string
+                  description: Optional query for generating personalized outreach messages.
+                  default: "Suggest buying my saas recruitment product <300 characters, email style, casual"
+                limit:  
+                  type: integer
+                  minimum: 1
+                  maximum: 1000
+                  default: 50
+                  description: The maximum number of company results to return.
+                leads_limit:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+                  default: 3
+                  description: The number of leads to find per company. 
+                show_emails:
+                  type: boolean
+                  default: true
+                  description: Include email addresses in lead results if available.
+                show_phone_numbers:
+                  type: boolean
+                  default: true
+                  description: Include phone numbers in lead results if available.
+              required:
+                - company_query
+      responses:
+        "200":
+          description: Company and lead search completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    type: string
+                    description: The complete search query that was processed.
+                    default: "Find companies: ```AI startups in San Francisco```\nFind leads in these companies: ```CTOs and engineering managers```"
+                  search_results:
+                    type: array
+                    description: List of company search results with associated leads.
+                    items:
+                      $ref: '#/components/schemas/CompanyLeadResult'
+                  created_at:
+                    type: number
+                    format: float
+                    description: Timestamp (UNIX epoch) when the query was created.
+                    default: 1744446727.123
+                  duration:
+                    type: number
+                    format: float
+                    description: Time taken to complete the search in seconds.
+                    default: 3.21
+                  user:
+                    type: string
+                    description: Email address of the user who made the query.
+                    default: "dev@dev.co"
+                  status:
+                    type: string
+                    description: The current status of the query.
+                    default: "Done"
+                  total_estimate:
+                    type: integer
+                    description: The estimated total number of companies available.
+                    default: 500
+                  credits_remaining:
+                    type: integer
+                    description: Number of credits remaining for the user.
+                    default: 950
+        "400":
+          description: Invalid parameter values. JSON body contains the error message.
+        "401":
+          description: Invalid API key
+        "502":
+          description: Search Backend Error
+
+  /v1/search:                      
+    get:
+      summary: Submit a search query
+      tags:
+        - Search endpoints
+      description: |
+        Submit a new search query or check the status of an existing query. Parameter are accepted both as query parameters with GET request and as JSON body with POST request.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+            default: "Seeking a CEO who co-founded a $1B startup"
+          description: The search query string to be processed. Provide either query or uuid.
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [fast, pro]
+            default: "pro"
+          description: The type of search to perform. 'fast' for quicker but less comprehensive results, 'pro' for more thorough analysis.
+        - name: require_emails
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Whether to require search results to have at least one email address (but don't necessarily return them)
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: The maximum number of search results to return.
+
+      responses:
+        "200":
+          description: Query accepted and status returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    description: Unique identifier for the query.
+                    default: "ec191bf9-99ff-4989-8383-c97c71fafb6d"
+                  query:
+                    type: string
+                    description: The search query submitted by the user.
+                    default: "software engineer from Ohio"
+                  user:
+                    type: string
+                    description: Email address of the user who made the query.
+                    default: "dev@dev.co"
+                  created_at:
+                    type: integer
+                    description: Timestamp (UNIX epoch) when the query was created.
+                    default: 1744446727
+                  status:
+                    type: string
+                    description: The current status of the query.
+                    default: "Done"
+                  total_results:
+                    type: integer
+                    description: The total number of search results returned.
+                    default: 1
+                  progress:
+                    type: number
+                    format: float
+                    description: Progress of the query processing
+                    default: 0.6
+                  execution_details:
+                    type: array
+                    description: Detailed execution steps of the query
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                          description: Status of a specific execution step
+                          default: "Started"
+                        timestamp:
+                          type: integer
+                          description: Timestamp of when the execution step occurred
+                          default: 1672531199
+                  search_results:
+                    type: array
+                    description: List of search result objects matching the query.
+                    items:
+                      $ref: '#/components/schemas/SearchResult'
+
+
+        "401":
+          description: Invalid API key
+        "400":
+          description: Invalid parameter values. JSON body contains the error message.
+
+
+  /v1/upsert_jobs:
+    post:
+      summary: Submit a list of jobs to be indexed
+      tags:
+        - Jobs
+      description: |
+        Accepts a JSON array of job objects, each with job_id and job_description fields, and indexes them. If job_id already exists, it will be updated. If replace is true, all existing jobs will be replaced with the provided list. If replace is false or omitted, jobs are upserted (added or updated only).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                jobs:
+                  type: array
+                  description: List of job objects to be upserted.
+                  items:
+                    type: object
+                    properties:
+                      job_id:
+                        type: string
+                        description: Unique identifier for the job
+                        default: "job-1234"
+                      job_description:
+                        type: string
+                        description: Description of the job
+                        default: "Machine Learning Engineer for an AI startup with leadership skills"
+                    required:
+                      - job_id
+                      - job_description
+                replace:
+                  type: boolean
+                  description: If true, replaces all existing jobs with the provided list. If false or omitted, jobs are upserted (added or updated).
+                  default: false
+              required:
+                - jobs
+      responses:
+        "200":
+          description: Jobs accepted and processed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    description: Unique identifier for the query.
+                    default: "ec191bf9-99ff-4989-8383-c97c71fafb6d"
+                  status:
+                    type: string
+                    default: "success"
+                  processed_count:
+                    type: integer
+                    default: 10
+        "400":
+          description: Invalid job data
+        "401":
+          description: Invalid API key
+
+  /v1/find_matching_jobs:
+    post:
+      summary: Find jobs relevant to the provided profile
+      tags:
+        - Jobs
+      description: |
+        Accepts a profile (arbitrary JSON), and returns a list of jobs relevant to the provided profile. Also accepts optional limit and type (fast/pro) arguments. 
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profile:
+                  type: object
+                  description: Arbitrary JSON representing the candidate profile.
+                  default:
+                    id: "123"
+                    name: "Jane Doe"
+                    work_history:
+                      - company: "Pure Storage"
+                        position: "Product Manager"
+                        start_date: "Mar 2024"
+                        end_date: "Present"
+                        description: ""
+                    education_history:
+                      - institution: "The School of Electrical and Computer Engineering of Applied Studies"
+                        degree: "Bachelor of Applied Science - BASc"
+                        field: "Information Technology"
+                        start_year: "2020"
+                        end_year: "2023"
+                    skills:
+                      - "Python"
+                      - "Machine Learning"
+                limit:
+                  type: integer
+                  description: Maximum number of jobs to return (1-100)
+                  default: 10
+      responses:
+        "200":
+          description: List of relevant jobs returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    description: Unique identifier for the query.
+                    default: "ec191bf9-99ff-4989-8383-c97c71fafb6d"
+                  jobs:
+                    type: array
+                    description: List of job objects relevant to the profile.
+                    items:
+                      type: object
+                      properties:
+                        job_id:
+                          type: string
+                          description: Unique identifier for the job.
+                          default: "job-1234"
+                        job_description:
+                          type: string
+                          description: Job description.
+                          default: "Work on AI models for healthcare."
+                        score:
+                          type: number
+                          format: float
+                          description: Relevance score for the match (2.0..5.0)
+                          default: 2.92
+                        insights:
+                          type: object
+                          description: Insights of how well the job matches the profile.
+                          properties:
+                            query_insights:
+                              type: array
+                              description: Insights broken down by subqueries.
+                              items:
+                                type: object
+                                properties:
+                                  match_level:
+                                    type: string
+                                    description: 'The degree to which the candidate matches the requirement: Exceeds Expectations,Meets Expectations,Partially Meets,Insufficient Data,Does Not Meet'
+                                    default: "Exceeds Expectations"
+                                  priority:
+                                    type: string
+                                    description: 'Indicates how important this subquery: Essential, Important, Optional'
+                                    default: "Essential"
+                                  short_rationale:
+                                    type: string
+                                    description: Concise version of the rationale.
+                                    default: "3+ years as a software engineer"
+                                  subquery:
+                                    type: string
+                                    description: Specific subquery analyzed for this insight.
+                                    default: "software engineer"
+                                  short_quotes:
+                                    type: array
+                                    description: Short quotes from the candidate's profile.
+                                    items:
+                                      type: string
+                                      default: "I have 3+ years of experience in software development."                          
+        "400":
+          description: Invalid input data
+        "401":
+          description: Invalid API key
+
+  /v1/profile:
+    get:
+      summary: Retrieve a user profile
+      tags:
+        - Profile endpoints
+      description: |
+        Retrieve a user profile based on the provided linkedin profile ID (docid) as a query parameter.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: docid
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "hrachik"
+          description: The linkedin profile ID of the profile to retrieve.
+        - name: high_freshness
+          in: query
+          required: true
+          schema:
+            type: boolean
+            default: true
+          description: Enable real-time profile updates for fresher data.
+        - name: show_emails
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Include email addresses in the profile if available.
+        - name: show_phone_numbers
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Include phone numbers in the profile if available.
+      responses:
+        "200":
+          description: Profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    description: Unique identifier for the query
+                    default: "ec191bf9-99ff-4989-8383-c97c71fafb6d"
+                  profile:
+                    $ref: '#/components/schemas/SearchResult'
+        "401":
+          description: Invalid API key
+        "404":
+          description: Profile not found
+        "400":
+          description: Invalid parameter values. JSON body contains the error message.
+
+components:
+  schemas:
+    Location:
+      type: object
+      description: Geographic location information
+      properties:
+        country_code:
+          type: string
+          description: ISO country code
+          default: "US"
+        lng:
+          type: number
+          format: float
+          description: Longitude coordinate
+          default: -84.1916
+        lat:
+          type: number
+          format: float
+          description: Latitude coordinate
+          default: 39.7391
+    
+    Language:
+      type: object
+      description: Language with proficiency level
+      properties:
+        language:
+          type: string
+          description: Language name
+          default: "English"
+        proficiency:
+          type: string
+          description: "Proficiency level: A1, A2, B1, B2, C1, C2"
+          default: "С1"
+    
+    FundingRound:
+      type: object
+      description: Information about a company's funding round
+      properties:
+        value_usd:
+          type: integer
+          description: Funding amount in USD
+          default: 2000000
+        date:
+          type: string
+          format: date
+          description: Date of the funding round
+          default: "2023-06-15"
+        round_name:
+          type: string
+          description: Name of the funding round
+          default: "Series A"
+    
+    CompanyInfo:
+      type: object
+      description: Comprehensive company information and metadata
+      properties:
+        name:
+          type: string
+          description: The name of the company
+          default: "Dragoonitcn"
+        domain:
+          type: string
+          description: Company's primary domain
+          default: "dragoonitcn.com"
+        website:
+          type: string
+          description: The official website of the company
+          default: "http://www.dragoonitcn.com"
+        linkedin_url:
+          type: string
+          description: The LinkedIn URL of the company
+          default: "https://linkedin.com/company/dragoon-itcn"
+        linkedin_slug:
+          type: string
+          description: LinkedIn slug identifier
+          default: "dragoon-itcn"
+        crunchbase_url:
+          type: string
+          description: The Crunchbase URL of the company
+          default: "https://www.crunchbase.com/organization/dragoonitcn"
+        social_urls:
+          type: array
+          description: List of social media URLs
+          items:
+            type: string
+          default: ["https://twitter.com/dragoonitcn", "https://facebook.com/pages/Dragoonitcn/125328487521849"]
+        phone_number:
+          type: string
+          description: Company phone number
+          default: "+1-555-123-4567"
+        short_address:
+          type: string
+          description: Brief address information
+          default: "Dayton, OH"
+        locations:
+          type: array
+          description: List of company locations
+          items:
+            type: string
+          default: ["Dayton, Ohio", "San Francisco, CA"]
+        type:
+          type: string
+          description: Type of company
+          default: "Private"
+        description:
+          type: string
+          description: A brief description of the company's business
+          default: "Targeting Complex Aerospace Issues with Precision Test Tools"
+        industries:
+          type: array
+          description: The industries the company operates in
+          items:
+            type: string
+          default: ["Aerospace", "Defense", "Information Technology"]
+        specialties:
+          type: array
+          description: Company specialties
+          items:
+            type: string
+          default: ["Precision Testing", "Aerospace Solutions"]
+        keywords:
+          type: array
+          description: Keywords associated with the company's operations
+          items:
+            type: string
+          default: ["cable fault isolation", "tdr", "comint"]
+        technologies:
+          type: array
+          description: Technologies used by the company
+          items:
+            type: string
+          default: ["Python", "Machine Learning", "Cloud Computing"]
+        founded_in:
+          type: integer
+          description: The year the company was founded
+          default: 1992
+        num_employees:
+          type: integer
+          description: Exact number of employees
+          default: 25
+        num_employees_range:
+          type: string
+          description: The range of the number of employees in the company
+          default: "11-50"
+        annual_revenue:
+          type: integer
+          description: The annual revenue of the company in USD
+          default: 33867000
+        followers_count:
+          type: integer
+          description: Number of followers on LinkedIn
+          default: 1500
+        funding_total_usd:
+          type: integer
+          description: Total funding raised in USD
+          default: 5000000
+        latest_funding_amount:
+          type: integer
+          description: Amount of the latest funding round in USD
+          default: 2000000
+        latest_funding_round:
+          type: string
+          description: Latest funding round information
+          default: "Series A"
+        last_funding_round_year:
+          type: integer
+          description: Year of the last funding round
+          default: 2023
+        valuation:
+          type: integer
+          description: Company valuation in USD
+          default: 50000000
+        funding_rounds:
+          type: array
+          description: List of funding rounds
+          items:
+            $ref: '#/components/schemas/FundingRound'
+        is_startup:
+          type: boolean
+          description: Indicates if the company is considered a startup
+          default: false
+        has_ipo:
+          type: boolean
+          description: Indicates if the company has had an Initial Public Offering (IPO)
+          default: false
+        is_b2b:
+          type: boolean
+          description: Indicates if the company operates on a Business-to-Business model
+          default: true
+        is_b2c:
+          type: boolean
+          description: Indicates if the company operates on a Business-to-Consumer model
+          default: false
+        is_saas:
+          type: boolean
+          description: Indicates if the company provides Software as a Service
+          default: false
+        is_hiring:
+          type: boolean
+          description: Indicates if the company is currently hiring
+          default: true
+        backed_by_y_combinator:
+          type: boolean
+          description: Indicates if the company is backed by Y Combinator
+          default: false
+        icon:
+          type: string
+          description: The URL to the company's icon image
+          default: "https://zenprospect-production.s3.amazonaws.com/uploads/pictures/6768a72faa352b0001ee57ef/picture"
+        website_score:
+          type: integer
+          description: Website quality/trust score
+          default: 85
+
+    Experience:
+      type: object
+      description: Professional work experience
+      properties:
+        sequenceNo:
+          type: integer
+          description: Sequence number for ordering roles
+          default: 1
+        company:
+          type: string
+          description: Name of the company for this role
+          default: "Dragoonitcn"
+        company_domain:
+          type: string
+          description: Company domain
+          default: "dragoonitcn.com"
+        title:
+          type: string
+          description: Job title for the role
+          default: "Software Engineer II"
+        start_date:
+          type: string
+          format: date
+          description: Start date of the role
+          default: "2024-01-01"
+        end_date:
+          type: string
+          format: date
+          description: End date of the role
+          default: "2024-08-01"
+        duration_years:
+          type: number
+          description: Duration in years the role was held
+          default: 0.7
+        age_years:
+          type: number
+          description: Age of the experience in years
+          default: 1.2
+        location:
+          type: string
+          description: Location of the job
+          default: "Dayton, Ohio, United States"
+        location_info:
+          type: object
+          description: Structured location information
+          additionalProperties: true
+        experience_summary:
+          type: string
+          description: Summary of responsibilities and accomplishments in this role
+          default: "Designed and developed software using .NET..."
+        is_current_experience:
+          type: boolean
+          description: Whether this is the current role
+          default: true
+        company_info:
+          $ref: '#/components/schemas/CompanyInfo'
+
+    Education:
+      type: object
+      description: Educational experience
+      properties:
+        sequenceNo:
+          type: integer
+          description: Sequence number for ordering education entries
+          default: 1
+        university_linkedin_url:
+          type: string
+          description: LinkedIn URL of the educational institution
+          default: "https://linkedin.com/school/university-of-california-berkeley"
+        campus:
+          type: string
+          description: Campus name or location
+          default: "Berkeley Campus"
+        specialization:
+          type: string
+          description: Field of specialization or study
+          default: "Computer Science"
+        degree:
+          type: array
+          description: 'List of degrees obtained: "bachelor", "master", "MBA", "doctor", "postdoc"'
+          items:
+            type: string
+          default: ["Bachelor", "Doctor"]
+        major:
+          type: string
+          description: Major field of study
+          default: "Computer Science"
+
+    Certification:
+      type: object
+      description: Professional certification
+      properties:
+        title:
+          type: string
+          description: Certification title
+          default: "AWS Certified Solutions Architect"
+
+    Patent:
+      type: object
+      description: Patent information
+      properties:
+        title:
+          type: string
+          description: Patent title
+          default: "Machine Learning Algorithm for Data Processing"
+        reference:
+          type: string
+          description: Patent reference number
+          default: "US10123456B2"
+        description:
+          type: string
+          description: Patent description
+          default: "A novel approach to processing large datasets using machine learning techniques"
+        date:
+          type: string
+          format: date
+          description: Patent date
+          default: "2023-05-15"
+        url:
+          type: string
+          description: URL to patent documentation
+          default: "https://patents.uspto.gov/patent/10123456"
+
+    CompanyExperienceGroup:
+      type: object
+      description: Group of experiences at the same company
+      properties:
+        company_info:
+          $ref: '#/components/schemas/CompanyInfo'
+        company_roles:
+          type: array
+          description: Roles held by the candidate in this company
+          items:
+            $ref: '#/components/schemas/Experience'
+
+    SearchResult:
+      type: object
+      description: A single search result object containing candidate profile and analysis
+      properties:
+        docid:
+          type: string
+          description: Unique document ID of the candidate profile.
+          default: "jason-tysl"
+        insighter:
+          type: object
+          description: Analysis and insights relevant to the query.
+          properties:
+            overall_summary:
+              type: string
+              description: General summary of the candidate's fit for the role.
+              default: "Jason Tysl is qualified engineer with 3+ years of experience."
+            query_insights:
+              type: array
+              description: Insights derived from the query, broken down by subquery.
+              items:
+                type: object
+                properties:
+                  match_level:
+                    type: string
+                    description: 'The degree to which the candidate matches the requirement: Exceeds Expectations,Meets Expectations,Partially Meets,Insufficient Data,Does Not Meet'
+                    default: "Exceeds Expectations"
+                  priority:
+                    type: string
+                    description: 'Indicates how important this subquery: Essential, Important, Optional'
+                    default: "Essential"
+                  short_rationale:
+                    type: string
+                    description: Concise version of the rationale.
+                    default: "3+ years as a software engineer"
+                  subquery:
+                    type: string
+                    description: Specific subquery analyzed for this insight.
+                    default: "software engineer"
+                  short_quotes:
+                    type: array
+                    description: Short quotes from the candidate's profile.
+                    items:
+                      type: string
+                      default: "I have 3+ years of experience in software development."
+        score:
+          type: integer
+          description: Numerical score representing candidate relevance.
+          default: 4
+          enum: [2, 3, 4]
+        profile:
+          type: object
+          description: Structured profile of the candidate based on StrictProfile schema.
+          properties:
+            docid:
+              type: string
+              description: Unique document ID of the candidate profile.
+              default: "jason-tysl"
+            linkedin_slug:
+              type: string
+              description: LinkedIn profile slug/identifier.
+              default: "jason-tysl"
+            first_name:
+              type: string
+              description: First name of the candidate.
+              default: "Jason"
+            middle_name:
+              type: string
+              description: Middle name of the candidate.
+              default: "Michael"
+            last_name:
+              type: string
+              description: Last name of the candidate.
+              default: "Tysl"
+            picture_url:
+              type: string
+              description: URL to the candidate's profile picture.
+              default: "https://default.com/profile.jpg"
+            title:
+              type: string
+              description: Current job title or headline.
+              default: "Software Engineer II"
+            summary:
+              type: string
+              description: Professional summary or bio.
+              default: "Experienced software engineer with expertise in..."
+            gender:
+              type: string
+              description: 'Gender of the candidate. As of now only two genders are supported: male, female'
+              default: "male"
+            is_decision_maker:
+              type: boolean
+              description: Whether the candidate is a decision maker in their organization.
+              default: true
+            languages:
+              type: array
+              description: List of languages the candidate knows with proficiency levels.
+              items:
+                $ref: '#/components/schemas/Language'
+            inferred_languages:
+              type: array
+              description: Languages inferred from the candidate's profile with proficiency levels.
+              items:
+                $ref: '#/components/schemas/Language'
+            location:
+              type: string
+              description: Current location of the candidate.
+              default: "Dayton, Ohio, United States"
+            is_top_universities:
+              type: boolean
+              description: Whether the candidate attended a top university.
+              default: true
+            is_opentowork:
+              type: boolean
+              description: Whether the candidate is open to work opportunities.
+              default: false
+            is_hiring:
+              type: boolean
+              description: Whether the candidate is currently hiring.
+              default: false
+            total_experience_years:
+              type: number
+              description: Total years of professional experience.
+              default: 3.5
+            estimated_age:
+              type: number
+              description: Estimated age of the candidate.
+              default: 28.0
+            expertise:
+              type: array
+              description: Areas of expertise or skills.
+              items:
+                type: string
+              default: ["Python", "Machine Learning", "Software Engineering"]
+            emails:
+              type: array
+              description: List of all email addresses associated with the candidate.
+              items:
+                type: string
+              default: ["jtysl@agileblue.com", "jason.tysl@gmail.com"]
+            best_personal_email:
+              type: string
+              description: Best personal email address for the candidate.
+              default: "jason.tysl@gmail.com"
+            best_business_email:
+              type: string
+              description: Best business email address for the candidate.
+              default: "jtysl@agileblue.com"
+            personal_emails:
+              type: array
+              description: List of personal email addresses.
+              items:
+                type: string
+              default: ["jason.tysl@gmail.com"]
+            business_emails:
+              type: array
+              description: List of business email addresses.
+              items:
+                type: string
+              default: ["jtysl@agileblue.com"]
+            phone_numbers:
+              type: array
+              description: List of phone numbers associated with the candidate.
+              items:
+                type: string
+              default: ["+1-555-123-4567"]
+            followers_count:
+              type: integer
+              description: Number of followers on LinkedIn.
+              default: 150
+            connections_count:
+              type: integer
+              description: Number of connections on LinkedIn.
+              default: 500
+            experiences:
+              type: array
+              description: List of professional work experiences grouped by company.
+              items:
+                $ref: '#/components/schemas/CompanyExperienceGroup'
+            educations:
+              type: array
+              description: List of educational experiences.
+              items:
+                $ref: '#/components/schemas/Education'
+            awards:
+              type: array
+              description: List of awards or recognitions received.
+              items:
+                type: string
+              default: ["The Morrill Scholarship Program"]
+            certifications:
+              type: array
+              description: List of certifications.
+              items:
+                $ref: '#/components/schemas/Certification'
+            memberships:
+              type: array
+              description: List of professional memberships.
+              items:
+                type: object
+                description: Membership object with flexible structure.
+                additionalProperties: true
+            patents:
+              type: array
+              description: List of patents.
+              items:
+                $ref: '#/components/schemas/Patent'
+            publications:
+              type: array
+              description: List of publications.
+              items:
+                type: object
+                description: Publication object with flexible structure.
+                additionalProperties: true
+            updated_date:
+              type: string
+              format: date
+              description: Date when the profile was last updated.
+              default: "2024-01-15"
+            outreach_message:
+              type: string
+              description: Personalized outreach message for the candidate.
+              default: "Hi Jason, I noticed your expertise in Python and machine learning..."
+
+    CompanyLeadResult:
+      type: object
+      description: A company search result with associated leads
+      properties:
+        company:
+          $ref: '#/components/schemas/CompanyInfo'
+        leads:
+          type: array
+          description: List of leads found within this company.
+          items:
+            $ref: '#/components/schemas/SearchResult'
+        score:
+          type: number
+          format: float
+          description: Relevance score for the company match (0..100). 100 means the company is a perfect match for the query.
+          default: 85
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+   
+security:
+  - bearerAuth: []
